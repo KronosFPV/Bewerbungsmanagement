@@ -3,14 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meine Bewerbungen</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Bewerbungsübersicht</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        button {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #ddd;
+        }
+    </style>
 </head>
 <body>
+    <h1>Bewerbungsübersicht</h1>
 
-    <h1>Meine Bewerbungen</h1>
-
-    <!-- Formular zum Hinzufügen/Bearbeiten von Bewerbungen -->
+    <h2>Neue Bewerbung hinzufügen</h2>
     <form id="bewerbung-form">
         <input type="text" id="title" placeholder="Stellenbezeichnung" required><br>
         <input type="text" id="company" placeholder="Unternehmen" required><br>
@@ -20,32 +43,30 @@
             <option value="Beworben">Beworben</option>
             <option value="Angebot erhalten">Angebot erhalten</option>
             <option value="Abgelehnt">Abgelehnt</option>
+            <option value="Einladung online">Einladung online</option>
+            <option value="Einladung vor Ort">Einladung vor Ort</option>
         </select><br>
         <textarea id="comment" placeholder="Kommentar"></textarea><br>
         <button type="submit">Bewerbung speichern</button>
     </form>
 
-    <!-- Übersicht der Bewerbungen -->
-    <section id="overview-section">
-        <h2>Meine Bewerbungen</h2>
-        <table id="bewerbungen-table">
-            <thead>
-                <tr>
-                    <th>Stellenbezeichnung</th>
-                    <th>Unternehmen</th>
-                    <th>Bewerbungsdatum</th>
-                    <th>Status</th>
-                    <th>Kommentar</th>
-                    <th>Letzte Änderung</th>
-                    <th>Aktionen</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Dynamische Tabellenzeilen werden hier eingefügt -->
-            </tbody>
-        </table>
-    </section>
+    <h2>Meine Bewerbungen</h2>
+    <table id="bewerbungen-table">
+        <thead>
+            <tr>
+                <th>Stellenbezeichnung</th>
+                <th>Unternehmen</th>
+                <th>Datum</th>
+                <th>Status</th>
+                <th>Kommentar</th>
+                <th>Letzte Aktualisierung</th>
+                <th>Aktionen</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 
     <script src="app.js"></script>
 </body>
 </html>
+
