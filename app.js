@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const bewerbungForm = document.getElementById('bewerbung-form');
     const bewerbungenTable = document.getElementById('bewerbungen-table').getElementsByTagName('tbody')[0];
+    let editingIndex = null; // Variable zur Speicherung des aktuellen Bearbeitungsindexes
 
     // Lade gespeicherte Bewerbungen aus LocalStorage
     const loadBewerbungen = () => {
@@ -62,11 +63,16 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         const bewerbungen = JSON.parse(localStorage.getItem('bewerbungen')) || [];
-        bewerbungen.push(newBewerbung);
+        if (editingIndex !== null) {
+            bewerbungen[editingIndex] = newBewerbung; // Aktualisiere die bestehende Bewerbung
+        } else {
+            bewerbungen.push(newBewerbung); // Füge eine neue Bewerbung hinzu
+        }
+        
         localStorage.setItem('bewerbungen', JSON.stringify(bewerbungen));
-
         loadBewerbungen();
         bewerbungForm.reset();
+        editingIndex = null; // Zurücksetzen der Bearbeitung
     });
 
     // Bewerbungen bearbeiten
@@ -81,25 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('status').value = bewerbung.status;
         document.getElementById('comment').value = bewerbung.comment;
 
-        // Bewerbungsdaten nach der Bearbeitung aktualisieren
-        bewerbungForm.addEventListener('submit', function updateBewerbung(e) {
-            e.preventDefault();
-
-            bewerbung.title = document.getElementById('title').value;
-            bewerbung.company = document.getElementById('company').value;
-            bewerbung.url = document.getElementById('url').value;
-            bewerbung.date = document.getElementById('date').value;
-            bewerbung.status = document.getElementById('status').value;
-            bewerbung.comment = document.getElementById('comment').value;
-            bewerbung.lastUpdated = new Date().toLocaleString();
-
-            // Speichern der aktualisierten Bewerbung
-            bewerbungen[index] = bewerbung;
-            localStorage.setItem('bewerbungen', JSON.stringify(bewerbungen));
-
-            loadBewerbungen();
-            bewerbungForm.reset();
-        });
+        editingIndex = index; // Setze den Index für die Bearbeitung
     };
 
     // Bewerbung löschen
@@ -114,4 +102,3 @@ document.addEventListener('DOMContentLoaded', () => {
     // Lade alle Bewerbungen beim Laden der Seite
     loadBewerbungen();
 });
-
