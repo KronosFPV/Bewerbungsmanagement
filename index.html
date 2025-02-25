@@ -5,121 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bewerbungsübersicht</title>
     <style>
+        /* Dein CSS hier (Beispiel) */
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-
-        header {
-            background-color: #333;
-            color: white;
-            padding: 10px;
-            text-align: center;
-        }
-
-        h1 {
-            margin: 0;
-            font-size: 24px;
-        }
-
-        h2 {
-            font-size: 18px;
-            margin-top: 20px;
-        }
-
-        form {
-            background-color: white;
-            padding: 20px;
             margin: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-
-        input, select, textarea, button {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        button {
-            background-color: #28a745;
-            color: white;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #218838;
-        }
-
+        
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
         }
 
         th, td {
             padding: 10px;
-            border: 1px solid #ddd;
             text-align: left;
         }
 
-        td button {
-            padding: 5px 10px;
-            cursor: pointer;
-            background-color: #ff4747;
+        th {
+            background-color: #f2f2f2;
+        }
+
+        button {
+            background-color: #4CAF50; /* Grün */
             color: white;
+            padding: 10px 20px;
             border: none;
-            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
         }
 
-        td button:hover {
-            background-color: #e63946;
-        }
-
-        /* Responsives Design für kleinere Bildschirme */
-        @media (max-width: 600px) {
-            table, th, td {
-                font-size: 12px;
-            }
-
-            h1, h2 {
-                font-size: 20px;
-            }
-
-            form {
-                margin: 10px;
-            }
+        button:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Bewerbungsübersicht</h1>
-    </header>
 
-    <h2>Neue Bewerbung hinzufügen</h2>
-    <form id="bewerbung-form">
-        <input type="text" id="title" placeholder="Stellenbezeichnung" required><br>
-        <input type="text" id="company" placeholder="Unternehmen" required><br>
-        <input type="url" id="url" placeholder="URL zur Jobbeschreibung"><br>
-        <input type="date" id="date" required><br>
-        <select id="status">
-            <option value="Beworben">Beworben</option>
-            <option value="Angebot erhalten">Angebot erhalten</option>
-            <option value="Abgelehnt">Abgelehnt</option>
-            <option value="Einladung online">Einladung online</option>
-            <option value="Einladung vor Ort">Einladung vor Ort</option>
-        </select><br>
-        <textarea id="comment" placeholder="Kommentar"></textarea><br>
-        <button type="submit">Bewerbung speichern</button>
-    </form>
-
-    <h2>Meine Bewerbungen</h2>
-    <table id="bewerbungen-table">
+    <h1>Bewerbungsübersicht</h1>
+    <table id="bewerbungstabelle">
         <thead>
             <tr>
                 <th>Stellenbezeichnung</th>
@@ -128,12 +56,73 @@
                 <th>Status</th>
                 <th>Kommentar</th>
                 <th>Letzte Aktualisierung</th>
-                <th>Aktionen</th>
             </tr>
         </thead>
-        <tbody></tbody>
+        <tbody>
+            <!-- Dynamisch erzeugte Bewerbungen werden hier eingefügt -->
+        </tbody>
     </table>
 
-    <script src="app.js"></script>
+    <!-- Export Button -->
+    <button id="export-btn">Exportieren als XLSX</button>
+
+    <!-- CDN für xlsx.js einfügen -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script> <!-- xlsx.js CDN -->
+    
+    <!-- Dein eigenes JavaScript -->
+    <script>
+        // Beispielhafte Bewerbungsdaten (um sie anzuzeigen)
+        const bewerbungen = [
+            { title: "Softwareentwickler", company: "Firma A", date: "2025-01-15", status: "Beworben", comment: "Erstes Gespräch gut", lastUpdated: "2025-02-20" },
+            { title: "Webdesigner", company: "Firma B", date: "2025-01-18", status: "Einladung online", comment: "Warten auf Antwort", lastUpdated: "2025-02-22" },
+            { title: "Produktmanager", company: "Firma C", date: "2025-02-10", status: "Absage", comment: "Leider abgelehnt", lastUpdated: "2025-02-23" }
+        ];
+
+        // Funktion zum Anzeigen der Bewerbungen in der Tabelle
+        function showApplications() {
+            const tableBody = document.querySelector("#bewerbungstabelle tbody");
+            tableBody.innerHTML = '';  // Leere die Tabelle
+            bewerbungen.forEach(bewerbung => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${bewerbung.title}</td>
+                    <td>${bewerbung.company}</td>
+                    <td>${bewerbung.date}</td>
+                    <td style="background-color:${bewerbung.status === 'Absage' ? 'red' : 'green'}">${bewerbung.status}</td>
+                    <td>${bewerbung.comment}</td>
+                    <td>${bewerbung.lastUpdated}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Aufruf der Funktion, um die Bewerbungen anzuzeigen
+        showApplications();
+
+        // Exportieren der Daten als XLSX-Datei
+        document.getElementById('export-btn').addEventListener('click', () => {
+            const data = bewerbungen.map(bewerbung => [
+                bewerbung.title,
+                bewerbung.company,
+                bewerbung.date,
+                bewerbung.status,
+                bewerbung.comment,
+                bewerbung.lastUpdated
+            ]);
+
+            // Kopfzeilen hinzufügen
+            const header = ['Stellenbezeichnung', 'Unternehmen', 'Datum', 'Status', 'Kommentar', 'Letzte Aktualisierung'];
+            data.unshift(header);
+
+            // Erstelle das Arbeitsblatt und die Arbeitsmappe
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Bewerbungen');
+
+            // Download der Datei
+            XLSX.writeFile(wb, 'Bewerbungen.xlsx');
+        });
+    </script>
+
 </body>
 </html>
