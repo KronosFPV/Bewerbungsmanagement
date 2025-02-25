@@ -3,45 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bewerbungsmanagement</title>
+    <title>Meine Bewerbungen</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>Bewerbungsmanagement</h1>
-    </header>
 
-    <!-- Formular zur Eingabe neuer Bewerbungen -->
-    <section id="form-section">
-        <h2>Neue Bewerbung hinzufügen</h2>
-        <form id="bewerbung-form">
-            <label for="title">Stellenbezeichnung:</label>
-            <input type="text" id="title" required>
+    <h1>Meine Bewerbungen</h1>
 
-            <label for="company">Unternehmen:</label>
-            <input type="text" id="company" required>
-
-            <label for="url">Link zur Stellenanzeige:</label>
-            <input type="url" id="url" required>
-
-            <label for="date">Bewerbungsdatum:</label>
-            <input type="date" id="date" required>
-
-            <label for="status">Status:</label>
-            <select id="status">
-                <option value="Gepseichert">Gepseichert</option>
-                <option value="Beworben">Beworben</option>
-                <option value="Interview">Interview</option>
-                <option value="Abgelehnt">Abgelehnt</option>
-                <option value="Angebot erhalten">Angebot erhalten</option>
-            </select>
-
-            <label for="comment">Kommentar/Notizen:</label>
-            <textarea id="comment"></textarea>
-
-            <button type="submit">Bewerbung hinzufügen</button>
-        </form>
-    </section>
+    <!-- Formular zum Hinzufügen/Bearbeiten von Bewerbungen -->
+    <form id="bewerbung-form">
+        <input type="text" id="title" placeholder="Stellenbezeichnung" required><br>
+        <input type="text" id="company" placeholder="Unternehmen" required><br>
+        <input type="url" id="url" placeholder="URL zur Jobbeschreibung"><br>
+        <input type="date" id="date" required><br>
+        <select id="status">
+            <option value="Beworben">Beworben</option>
+            <option value="Angebot erhalten">Angebot erhalten</option>
+            <option value="Abgelehnt">Abgelehnt</option>
+        </select><br>
+        <textarea id="comment" placeholder="Kommentar"></textarea><br>
+        <button type="submit">Bewerbung speichern</button>
+    </form>
 
     <!-- Übersicht der Bewerbungen -->
     <section id="overview-section">
@@ -55,6 +37,7 @@
                     <th>Status</th>
                     <th>Kommentar</th>
                     <th>Letzte Änderung</th>
+                    <th>Aktionen</th>
                 </tr>
             </thead>
             <tbody>
