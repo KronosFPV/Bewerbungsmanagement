@@ -33,7 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td style="${statusColor}">${bewerbung.status}</td>
                 <td>${bewerbung.comment}</td>
                 <td>${bewerbung.lastUpdated}</td>
-                <td><button onclick="editBewerbung(${index})">Bearbeiten</button></td>
+                <td>
+                    <button onclick="editBewerbung(${index})">Bearbeiten</button>
+                    <button onclick="deleteBewerbung(${index})">Löschen</button>
+                </td>
             `;
         });
     };
@@ -91,6 +94,15 @@ document.addEventListener('DOMContentLoaded', () => {
             loadBewerbungen();
             bewerbungForm.reset();
         });
+    };
+
+    // Bewerbung löschen
+    window.deleteBewerbung = (index) => {
+        const bewerbungen = JSON.parse(localStorage.getItem('bewerbungen'));
+        bewerbungen.splice(index, 1); // Entfernt das Element an der angegebenen Position
+        localStorage.setItem('bewerbungen', JSON.stringify(bewerbungen));
+
+        loadBewerbungen(); // Tabelle neu laden
     };
 
     // Lade alle Bewerbungen beim Laden der Seite
