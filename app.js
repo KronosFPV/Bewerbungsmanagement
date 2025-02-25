@@ -6,15 +6,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadBewerbungen = () => {
         const bewerbungen = JSON.parse(localStorage.getItem('bewerbungen')) || [];
         bewerbungenTable.innerHTML = ''; // Leere die Tabelle
-        bewerbungen.forEach(bewerbung => {
+        bewerbungen.forEach((bewerbung, index) => {
             const row = bewerbungenTable.insertRow();
+            
+            // Statusfarbe ändern
+            let statusColor = '';
+            switch (bewerbung.status) {
+                case 'Angebot erhalten':
+                    statusColor = 'background-color: green; color: white;';
+                    break;
+                case 'Abgelehnt':
+                    statusColor = 'background-color: red; color: white;';
+                    break;
+                case 'Beworben':
+                    statusColor = 'background-color: green; color: white;';
+                    break;
+                default:
+                    statusColor = '';
+                    break;
+            }
+
             row.innerHTML = `
                 <td>${bewerbung.title}</td>
                 <td>${bewerbung.company}</td>
                 <td>${bewerbung.date}</td>
-                <td>${bewerbung.status}</td>
+                <td style="${statusColor}">${bewerbung.status}</td>
                 <td>${bewerbung.comment}</td>
                 <td>${bewerbung.lastUpdated}</td>
+                <td><button onclick="editBewerbung(${index})">Bearbeiten</button></td>
             `;
         });
     };
@@ -41,5 +60,39 @@ document.addEventListener('DOMContentLoaded', () => {
         bewerbungForm.reset();
     });
 
-    loadBewerbungen(); // Lade gespeicherte Bewerbungen beim Laden der Seite
+    // Bewerbungen bearbeiten
+    window.editBewerbung = (index) => {
+        const bewerbungen = JSON.parse(localStorage.getItem('bewerbungen'));
+        const bewerbung = bewerbungen[index];
+
+        document.getElementById('title').value = bewerbung.title;
+        document.getElementById('company').value = bewerbung.company;
+        document.getElementById('url').value = bewerbung.url;
+        document.getElementById('date').value = bewerbung.date;
+        document.getElementById('status').value = bewerbung.status;
+        document.getElementById('comment').value = bewerbung.comment;
+
+        // Bewerbungsdaten nach der Bearbeitung aktualisieren
+        bewerbungForm.addEventListener('submit', function updateBewerbung(e) {
+            e.preventDefault();
+
+            bewerbung.title = document.getElementById('title').value;
+            bewerbung.company = document.getElementById('company').value;
+            bewerbung.url = document.getElementById('url').value;
+            bewerbung.date = document.getElementById('date').value;
+            bewerbung.status = document.getElementById('status').value;
+            bewerbung.comment = document.getElementById('comment').value;
+            bewerbung.lastUpdated = new Date().toLocaleString();
+
+            // Speichern der aktualisierten Bewerbung
+            bewerbungen[index] = bewerbung;
+            localStorage.setItem('bewerbungen', JSON.stringify(bewerbungen));
+
+            loadBewerbungen();
+            bewerbungForm.reset();
+        });
+    };
+
+    // Lade alle Bewerbungen beim Laden der Seite
+    loadBewerbungen();
 });
