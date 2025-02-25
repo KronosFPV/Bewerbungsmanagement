@@ -21,6 +21,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'Beworben':
                     statusColor = 'background-color: green; color: white;';
                     break;
+                case 'Einladung online':
+                    statusColor = 'background-color: blue; color: white;';
+                    break;
+                case 'Einladung vor Ort':
+                    statusColor = 'background-color: yellow; color: black;';
+                    break;
                 default:
                     statusColor = '';
                     break;
@@ -108,3 +114,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // Lade alle Bewerbungen beim Laden der Seite
     loadBewerbungen();
 });
+
