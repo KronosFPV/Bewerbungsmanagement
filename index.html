@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bewerbungsübersicht</title>
     <style>
-        /* Dein CSS hier (Beispiel) */
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
         }
-        
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -42,11 +41,55 @@
         button:hover {
             background-color: #45a049;
         }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+
+        .form-container {
+            margin-bottom: 30px;
+        }
     </style>
 </head>
 <body>
 
     <h1>Bewerbungsübersicht</h1>
+
+    <!-- Eingabemaske für neue Bewerbung -->
+    <div class="form-container">
+        <h2>Neue Bewerbung hinzufügen</h2>
+        <form id="bewerbung-form">
+            <label for="title">Stellenbezeichnung:</label>
+            <input type="text" id="title" required>
+
+            <label for="company">Unternehmen:</label>
+            <input type="text" id="company" required>
+
+            <label for="date">Datum:</label>
+            <input type="date" id="date" required>
+
+            <label for="status">Status:</label>
+            <select id="status">
+                <option value="Beworben">Beworben</option>
+                <option value="Absage">Absage</option>
+                <option value="Einladung online">Einladung online</option>
+                <option value="Einladung vor Ort">Einladung vor Ort</option>
+                <option value="Angebot erhalten">Angebot erhalten</option>
+            </select>
+
+            <label for="comment">Kommentar:</label>
+            <textarea id="comment"></textarea>
+
+            <button type="submit">Bewerbung hinzufügen</button>
+        </form>
+    </div>
+
+    <!-- Bewerbungsübersicht -->
+    <h2>Übersicht der Bewerbungen</h2>
     <table id="bewerbungstabelle">
         <thead>
             <tr>
@@ -66,22 +109,42 @@
     <!-- Export Button -->
     <button id="export-btn">Exportieren als XLSX</button>
 
-    <!-- CDN für xlsx.js einfügen -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script> <!-- xlsx.js CDN -->
-    
-    <!-- Dein eigenes JavaScript -->
-    <script>
-        // Beispielhafte Bewerbungsdaten (um sie anzuzeigen)
-        const bewerbungen = [
-            { title: "Softwareentwickler", company: "Firma A", date: "2025-01-15", status: "Beworben", comment: "Erstes Gespräch gut", lastUpdated: "2025-02-20" },
-            { title: "Webdesigner", company: "Firma B", date: "2025-01-18", status: "Einladung online", comment: "Warten auf Antwort", lastUpdated: "2025-02-22" },
-            { title: "Produktmanager", company: "Firma C", date: "2025-02-10", status: "Absage", comment: "Leider abgelehnt", lastUpdated: "2025-02-23" }
-        ];
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 
-        // Funktion zum Anzeigen der Bewerbungen in der Tabelle
-        function showApplications() {
+    <script>
+        // Firebase Konfiguration (Daten aus deinem Firebase-Projekt)
+        const firebaseConfig = {
+            apiKey: "DEINE_API_KEY",
+            authDomain: "DEIN_PROJECT_ID.firebaseapp.com",
+            projectId: "DEIN_PROJECT_ID",
+            storageBucket: "DEIN_PROJECT_ID.appspot.com",
+            messagingSenderId: "DEIN_MESSAGING_SENDER_ID",
+            appId: "DEIN_APP_ID",
+            measurementId: "DEIN_MEASUREMENT_ID"
+        };
+
+        // Firebase initialisieren
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore(app);
+
+        // Daten abrufen und anzeigen
+        function loadApplications() {
+            db.collection("bewerbungen").get().then((querySnapshot) => {
+                const bewerbungen = [];
+                querySnapshot.forEach((doc) => {
+                    bewerbungen.push(doc.data());
+                });
+                showApplications(bewerbungen);
+            });
+        }
+
+        // Bewerbungen in der Tabelle anzeigen
+        function showApplications(bewerbungen) {
             const tableBody = document.querySelector("#bewerbungstabelle tbody");
-            tableBody.innerHTML = '';  // Leere die Tabelle
+            tableBody.innerHTML = '';
             bewerbungen.forEach(bewerbung => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -96,32 +159,55 @@
             });
         }
 
-        // Aufruf der Funktion, um die Bewerbungen anzuzeigen
-        showApplications();
+        // Neue Bewerbung hinzufügen (Formular)
+        document.getElementById('bewerbung-form').addEventListener('submit', function(event) {
+            event.preventDefault();
 
-        // Exportieren der Daten als XLSX-Datei
-        document.getElementById('export-btn').addEventListener('click', () => {
-            const data = bewerbungen.map(bewerbung => [
-                bewerbung.title,
-                bewerbung.company,
-                bewerbung.date,
-                bewerbung.status,
-                bewerbung.comment,
-                bewerbung.lastUpdated
-            ]);
+            const title = document.getElementById('title').value;
+            const company = document.getElementById('company').value;
+            const date = document.getElementById('date').value;
+            const status = document.getElementById('status').value;
+            const comment = document.getElementById('comment').value;
 
-            // Kopfzeilen hinzufügen
-            const header = ['Stellenbezeichnung', 'Unternehmen', 'Datum', 'Status', 'Kommentar', 'Letzte Aktualisierung'];
-            data.unshift(header);
-
-            // Erstelle das Arbeitsblatt und die Arbeitsmappe
-            const ws = XLSX.utils.aoa_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Bewerbungen');
-
-            // Download der Datei
-            XLSX.writeFile(wb, 'Bewerbungen.xlsx');
+            // Bewerbung speichern in Firebase
+            db.collection("bewerbungen").add({
+                title: title,
+                company: company,
+                date: date,
+                status: status,
+                comment: comment,
+                lastUpdated: new Date().toISOString()
+            })
+            .then(() => {
+                loadApplications(); // Bewerbungen nach dem Hinzufügen neu laden
+                document.getElementById('bewerbung-form').reset(); // Formular zurücksetzen
+            })
+            .catch(error => {
+                console.error("Fehler beim Hinzufügen der Bewerbung: ", error);
+            });
         });
+
+        // Exportieren der Daten als XLSX
+        document.getElementById('export-btn').addEventListener('click', () => {
+            db.collection("bewerbungen").get().then((querySnapshot) => {
+                const data = [];
+                querySnapshot.forEach((doc) => {
+                    const bewerbung = doc.data();
+                    data.push([bewerbung.title, bewerbung.company, bewerbung.date, bewerbung.status, bewerbung.comment, bewerbung.lastUpdated]);
+                });
+
+                const header = ['Stellenbezeichnung', 'Unternehmen', 'Datum', 'Status', 'Kommentar', 'Letzte Aktualisierung'];
+                data.unshift(header);
+
+                const ws = XLSX.utils.aoa_to_sheet(data);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Bewerbungen');
+                XLSX.writeFile(wb, 'Bewerbungen.xlsx');
+            });
+        });
+
+        // Initialisieren und Bewerbungen laden
+        loadApplications();
     </script>
 
 </body>
